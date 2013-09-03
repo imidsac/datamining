@@ -1,7 +1,7 @@
 require 'csv'
 
 class Datastore < ActiveRecord::Base
-  has_many :lines
+  has_many :lines, inverse_of: :datastore
 
   #
   # Load datastore from CSV file.
@@ -34,10 +34,9 @@ class Datastore < ActiveRecord::Base
   #
   # @return [Array] Lines
   def duplicated_lines(store, key)
-    self.lines.inject([]) do |acc, line|
-      value = line.data[key]
-      acc << line if store.lines.where("data -> :key = :value", key: key, value: value).any?
-      acc
-    end
+    self.lines.
+      joins("join lines as l on l.datastore_id = #{store.id}").
+      where("lines.data -> :key = l.data -> :key", key: key).
+      all
   end
 end

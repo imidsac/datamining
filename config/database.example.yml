@@ -1,0 +1,12 @@
+common: &common
+  adapter: postgresql
+  username: articles_synbioz
+  password: articles_synbioz
+  encoding: utf8
+  pool: 5
+
+development:
+  <<: *common
+  database: articles_synbioz_hstore
+
+
